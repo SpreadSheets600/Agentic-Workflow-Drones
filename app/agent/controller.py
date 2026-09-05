@@ -18,11 +18,17 @@ SEPARATOR = "=" * 60
 
 
 class AgentController:
-    """Owns observation-dependent mission decisions and mission memory."""
+    """Owns Observation-Dependent Mission Decisions And Mission Memory."""
 
     def __init__(
-        self, state, drone=None, vision=None, planner=None, retriever=None, max_steps=30,
-        tool_timeout=10.0
+        self,
+        state,
+        drone=None,
+        vision=None,
+        planner=None,
+        retriever=None,
+        max_steps=30,
+        tool_timeout=10.0,
     ):
         self.state = state
         self.drone = drone or MockDrone()
@@ -54,12 +60,18 @@ class AgentController:
         else:
             context = MissionParser().parse(self.state.missionID, self.state.target)
         self.state.requirements = list(context.requirements.required_capabilities)
-        print(f"Mission Source: {'Free text (mock NLP parser)' if context.source == 'nlp' else 'Structured (static parser)'}")
+        print(
+            f"Mission Source: {'Free text (mock NLP parser)' if context.source == 'nlp' else 'Structured (static parser)'}"
+        )
         if context.source == "nlp":
             print(f"Parsed Target: {self.state.target}")
             if context.battery_floor is not None:
-                print(f"Parsed Constraint: return when battery hits {context.battery_floor:.0f}%")
-        self.state.record_event("MISSION_PARSED", f"target={self.state.target}; source={context.source}")
+                print(
+                    f"Parsed Constraint: return when battery hits {context.battery_floor:.0f}%"
+                )
+        self.state.record_event(
+            "MISSION_PARSED", f"target={self.state.target}; source={context.source}"
+        )
         initial = self.planner.create_plan(self.state.target)
         self.plan = [action.action_type.value for action in initial] + [
             "verify_finding",
@@ -259,10 +271,10 @@ class AgentController:
         return handled
 
     def _trace(self, action, observation, handled):
-        """One-line decision trace in the challenge's suggested format.
+        """One-Line Decision Trace In The Challenge's Suggested Format.
 
-        Printed AFTER state update + decision handling so the shown
-        state already reflects the decision that was made.
+        Printed AFTER State Update + Decision Handling So The Shown
+        State Already Reflects The Decision That Was Made.
         """
         data = observation.data or {}
         result_parts = [f"success={str(observation.success).lower()}"]
@@ -286,7 +298,6 @@ class AgentController:
             f"decision: {decision} | "
             f"steps_left={self.max_steps - self._steps_used}"
         )
-
 
     def call_tool(self, action):
         tools = {
@@ -366,9 +377,14 @@ class AgentController:
         # The Advisor Only Selects Among Pre-Approved Policies (Retry Vs
         # Abort); The Retry Budget Still Caps It.
         classification = FailureAdvisor.classify(observation.message)
-        s.record_event("ADVISOR", f"{observation.toolName} failure classified {classification}.")
+        s.record_event(
+            "ADVISOR", f"{observation.toolName} failure classified {classification}."
+        )
         print(f"Advisor: failure classified as {classification}")
-        if action.action_type == ActionType.CAPTURE_IMAGE and classification == "transient":
+        if (
+            action.action_type == ActionType.CAPTURE_IMAGE
+            and classification == "transient"
+        ):
             s.retries += 1
             s.camera_retries += 1
             if s.camera_retries <= s.maxRetries:
@@ -443,4 +459,3 @@ class AgentController:
     def _generate_failure_report(self):
         self.report = generate_report(self.state)
         print("\n" + self.report)
-

@@ -30,17 +30,17 @@ class MissionParser:
 
 
 class NLPMissionParser:
-    """Stand-in for an LLM-based mission parser.
+    """Stand-In For An LLM-Based Mission Parser.
 
-    A real deployment would send the free-text mission to an LLM and ask
-    for structured JSON (target, required capabilities, constraints,
-    success criteria). Here the extraction is mocked with keyword rules
-    so the demo stays deterministic, offline, and explainable.
+    A Real Deployment Would Send The Free-Text Mission To An LLM And Ask
+    For Structured JSON (Target, Required Capabilities, Constraints,
+    Success Criteria). Here The Extraction Is Mocked With Keyword Rules
+    So The Demo Stays Deterministic, Offline, And Explainable.
 
-    Boundary (unchanged): the parsed result is a PROPOSAL that fills in
-    MissionState/requirements. It can only narrow what the agent does —
-    the pre-flight gate still rejects missions whose capabilities are
-    not actually available, and the guardrails still enforce every rule.
+    Boundary (Unchanged): The Parsed Result Is A PROPOSAL That Fills In
+    MissionState/Requirements. It Can Only Narrow What The Agent Does —
+    The Pre-Flight Gate Still Rejects Missions Whose Capabilities Are
+    Not Actually Available, And The Guardrails Still Enforce Every Rule.
     """
 
     # Keyword -> capability. A real LLM would infer these semantically.
@@ -62,7 +62,7 @@ class NLPMissionParser:
 
     BATTERY_RE = re.compile(r"batter\w*\s*(?:hits|drops|below|at|under)\s*(\d{1,3})\s*%")
 
-    def parse(self, mission_text: str, mission_id: str = "MISSION-NLP") -> MissionContext:
+    def parse(self, mission_text: str, mission_id: str = "MISSION-NLP"):
         text = (mission_text or "").lower()
 
         # Target: noun phrase after "inspect"/"check"/"survey", else a

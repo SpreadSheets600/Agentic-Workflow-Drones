@@ -3,11 +3,11 @@ from enum import Enum
 
 
 class ActionType(Enum):
-    """Executable capabilities exposed by the tool layer.
+    """Executable Capabilities Exposed By The Tool Layer.
 
-    Only these may be sent to SafetyValidator and the tools. Anything
-    else (re-inspecting, verifying, aborting) is an agent-level
-    *decision* (see DecisionType), never a physical drone command.
+    Only These May Be Sent To SafetyValidator And The Tools. Anything
+    Else (Re-Inspecting, Verifying, Aborting) Is An Agent-Level
+    *Decision* (See DecisionType), Never A Physical Drone Command.
     """
 
     CHECK_BATTERY = "check_battery"
@@ -30,12 +30,12 @@ class AgentAction:
 
 
 class DecisionType(Enum):
-    """Mission-level decisions made by the agent.
+    """Mission-Level Decisions Made By The Agent.
 
-    A decision explains *why*; it expands into zero or more executable
-    AgentActions. For example RE_INSPECT expands into the execution
-    sequence CAPTURE_IMAGE -> DETECT_ANOMALY, while VERIFY_FINDING needs
-    no tool at all (it records the finding in mission memory).
+    A Decision Explains *Why*; It Expands Into Zero Or More Executable
+    AgentActions. For Example RE_INSPECT Expands Into The Execution
+    Sequence CAPTURE_IMAGE -> DETECT_ANOMALY, While VERIFY_FINDING Needs
+    No Tool At All (It Records The Finding In Mission Memory).
     """
 
     PROCEED = "proceed"  # Execute the next step of the current plan.

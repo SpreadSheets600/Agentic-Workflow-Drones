@@ -2,12 +2,12 @@ from app.models.observations import ToolObservation
 
 
 class MockVision:
-    """Simulated camera + anomaly detector.
+    """Simulated Camera + Anomaly Detector.
 
-    Intended scenario (must be preserved for the interview demo):
-    - 1st capture FAILS (camera timeout), later captures succeed.
-    - 1st detection reports weak evidence (confidence 0.46).
-    - 2nd+ detection reports strong evidence (confidence 0.93).
+    Intended Scenario (Must Be Preserved For The Interview Demo):
+    - 1st Capture FAILS (Camera Timeout), Later Captures Succeed.
+    - 1st Detection Reports Weak Evidence (Confidence 0.46).
+    - 2nd+ Detection Reports Strong Evidence (Confidence 0.93).
     """
 
     def __init__(self, camera_available=True):
@@ -16,13 +16,23 @@ class MockVision:
         self.camera_available = camera_available
 
     def check_camera(self):
-        return ToolObservation(self.camera_available, "check_camera", f"Camera {'Available' if self.camera_available else 'Unavailable'}.", {"available": self.camera_available})
+        return ToolObservation(
+            self.camera_available,
+            "check_camera",
+            f"Camera {'Available' if self.camera_available else 'Unavailable'}.",
+            {"available": self.camera_available},
+        )
 
     def captureImage(self, location: str):
         self.captureAttempts += 1
 
         if not self.camera_available:
-            return ToolObservation(False, "capture_image", "Camera Initialization Failed.", {"location": location})
+            return ToolObservation(
+                False,
+                "capture_image",
+                "Camera Initialization Failed.",
+                {"location": location},
+            )
 
         # Simulate A Camera Failure On The First Attempt
         if self.captureAttempts == 1:

@@ -4,11 +4,11 @@ from app.models.state import MissionState
 
 
 class SafetyValidator:
-    """Deterministic safety layer for *executable* tool actions only.
+    """Deterministic Safety Layer For *Executable* Tool Actions Only.
 
-    The agent decides what it wants to do (AgentDecision); this validator
-    decides whether the proposed tool action is allowed to execute. It
-    never performs semantic reasoning -- only deterministic checks.
+    The Agent Decides What It Wants To Do (AgentDecision); This Validator
+    Decides Whether The Proposed Tool Action Is Allowed To Execute. It
+    Never Performs Semantic Reasoning -- Only Deterministic Checks.
     """
 
     @staticmethod

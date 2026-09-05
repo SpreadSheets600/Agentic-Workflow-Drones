@@ -26,7 +26,10 @@ def generate_report(state: MissionState):
         state.readiness_reason,
         "",
         "Initial Plan:",
-        *[f"{i}. {step.replace('_', ' ').title()}" for i, step in enumerate(state.initial_plan, 1)],
+        *[
+            f"{i}. {step.replace('_', ' ').title()}"
+            for i, step in enumerate(state.initial_plan, 1)
+        ],
         "",
         "Actual Decision Path:",
         *(state.decisions if state.decisions else ["(None)"]),
@@ -44,10 +47,7 @@ def generate_report(state: MissionState):
         *(state.evidence if state.evidence else ["(None)"]),
         "",
         "Mission Events:",
-        *[
-            f"{i}. {event}"
-            for i, event in enumerate(_mission_events(state), 1)
-        ],
+        *[f"{i}. {event}" for i, event in enumerate(_mission_events(state), 1)],
         "",
         "Failure Handling:",
         f"Camera Failures: {len(state.failures)}",
@@ -76,14 +76,14 @@ def generate_report(state: MissionState):
 
 
 def _narrative(state: MissionState):
-    """Mock LLM narrative writer.
+    """Mock LLM Narrative Writer.
 
-    A real deployment would hand the structured facts (finding,
-    confidence, evidence, failure/retry history) to an LLM and ask for a
-    short human-readable narrative. Here the prose is templated from the
-    same facts so the demo stays deterministic. Boundary (unchanged):
-    the narrative only REWORDS facts already in mission memory — it can
-    never change the finding, the confidence, or the outcome.
+    A Real Deployment Would Hand The Structured Facts (Finding,
+    Confidence, Evidence, Failure/Retry History) To An LLM And Ask For A
+    Short Human-Readable Narrative. Here The Prose Is Templated From The
+    Same Facts So The Demo Stays Deterministic. Boundary (Unchanged):
+    The Narrative Only REWORDS Facts Already In Mission Memory — It Can
+    Never Change The Finding, The Confidence, Or The Outcome.
     """
     if state.status.value == "aborted":
         return (
@@ -123,7 +123,9 @@ def _mission_events(state: MissionState):
     history = " ".join(state.history)
 
     for result in state.preflight_results:
-        events.append(f"Pre-Flight {result['name']}: {'Passed' if result['passed'] else 'Failed'}.")
+        events.append(
+            f"Pre-Flight {result['name']}: {'Passed' if result['passed'] else 'Failed'}."
+        )
 
     if "check_battery" in history:
         events.append(f"Battery Verified At {_verified_battery(state)}.")
@@ -145,7 +147,9 @@ def _mission_events(state: MissionState):
         events.append(f"Anomaly Detection #{i}: Confidence {confidence:.2f}.")
     if any("RE_INSPECT" in h or "re_inspect" in h for h in state.history):
         if state.knowledge_sources:
-            events.append("Semantic Knowledge Indicated That Evidence Was Insufficient.")
+            events.append(
+                "Semantic Knowledge Indicated That Evidence Was Insufficient."
+            )
         events.append("Agent Re-Planned Inspection (Additional Evidence).")
     if state.findings:
         events.append(f"Finding Verified At Confidence {state.anomalyConfidence:.2f}.")
@@ -173,9 +177,13 @@ def _outcome_text(state: MissionState):
             "And Drone Safely Returned To Base."
         )
     if state.status.value == "complete":
-        return "Inspection Complete; No Anomaly Confirmed. Drone Safely Returned To Base."
+        return (
+            "Inspection Complete; No Anomaly Confirmed. Drone Safely Returned To Base."
+        )
     if state.status.value == "aborted":
-        return "Mission Aborted Safely After Exhausting Retries Or Failing A Safety Check."
+        return (
+            "Mission Aborted Safely After Exhausting Retries Or Failing A Safety Check."
+        )
     return f"Mission Ended With Status: {state.status.value}."
 
 
@@ -183,7 +191,9 @@ def _summary(state):
     if state.status.value == "aborted":
         return "The mission was stopped safely before completion."
     if state.findings:
-        return (f"Collected {len(state.evidence)} image(s), recovered from "
-                f"{len(state.failures)} failure(s), and confirmed the finding "
-                f"after {len(state.confidence_history)} analysis attempt(s).")
+        return (
+            f"Collected {len(state.evidence)} image(s), recovered from "
+            f"{len(state.failures)} failure(s), and confirmed the finding "
+            f"after {len(state.confidence_history)} analysis attempt(s)."
+        )
     return f"Collected {len(state.evidence)} image(s); no finding was confirmed."

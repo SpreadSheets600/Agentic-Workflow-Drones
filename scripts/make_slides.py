@@ -1,4 +1,4 @@
-"""Generate the 6-slide challenge deck: WeevilDrone_Agentic_Demo.pptx
+"""Generate The 6-Slide Challenge Deck: WeevilDrone_Agentic_Demo.pptx
 Run:  .venv/bin/python scripts/make_slides.py
 """
 from pptx import Presentation

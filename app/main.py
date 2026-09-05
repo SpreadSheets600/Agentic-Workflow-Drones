@@ -21,6 +21,7 @@ def build_state(scenario: str):
         )
     return MissionState(missionID="MISSION-001", target="Solar Panel Area A")
 
+
 # Main Function With Inspection Arguments
 def main(argv=None):
     parser = argparse.ArgumentParser(description="WeevilDrone Inspection Mission")

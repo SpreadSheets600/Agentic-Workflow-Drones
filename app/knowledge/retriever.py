@@ -49,11 +49,11 @@ _LIST_ITEM_RE = re.compile(r"^\s*(?:\d+[.)\-:]|[-*•])\s+\S")
 
 
 def _split_paragraph_block(block: str):
-    """Split one blank-line-delimited block into chunk strings.
+    """Split One Blank-Line-Delimited Block Into Chunk Strings.
 
-    List blocks (numbered/bulleted) are split per item, merging wrapped
-    continuation lines into the preceding item. Plain paragraphs have
-    internal single newlines collapsed to spaces.
+    List Blocks (Numbered/Bulleted) Are Split Per Item, Merging Wrapped
+    Continuation Lines Into The Preceding Item. Plain Paragraphs Have
+    Internal Single Newlines Collapsed To Spaces.
     """
     lines = [line.strip() for line in block.strip().splitlines()]
     lines = [line for line in lines if line]
@@ -77,7 +77,7 @@ def _split_paragraph_block(block: str):
 
 
 def chunk_text(text: str):
-    """Split raw document text into retrieval-friendly chunks."""
+    """Split Raw Document Text Into Retrieval-Friendly Chunks."""
     blocks = re.split(r"\n\s*\n", text.strip())
     chunks: list[str] = []
     for block in blocks:
