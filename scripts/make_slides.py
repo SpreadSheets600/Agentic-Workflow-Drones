@@ -1,4 +1,4 @@
-"""Generate The 6-Slide Challenge Deck: WeevilDrone_Agentic_Demo.pptx
+"""Generate the 7-slide challenge deck: WeevilDrone_Agentic_Demo.pptx
 Run:  .venv/bin/python scripts/make_slides.py
 """
 from pptx import Presentation
@@ -96,6 +96,9 @@ bullets(s, [
     ("What the system demonstrates", 0, {"bold": True, "color": NAVY, "size": 19, "space": 4}),
     ("Goal > Plan > Observe > Decide > Act > Verify > Re-plan > Complete", 0, {"mono": True, "size": 15}),
     ("6 tools · decisions driven by tool results · visible state changes · bounded retry · safe abort", 0),
+    ("Two mission intake paths", 0, {"bold": True, "color": NAVY, "size": 19, "space": 4}),
+    ("Structured (--scenario) or free text (--mission \"Inspect the north solar field; return when battery hits 45%\")", 0),
+    ("The mock-NLP parser proposes target/capabilities/constraints — pre-flight still gates every one of them", 0),
     ("Engineering constraints I set", 0, {"bold": True, "color": NAVY, "size": 19, "space": 4}),
     ("Mocked drone + vision (same contracts a real stack would expose) · plain Python · every decision explainable to a line of code", 0),
 ], y=2.45, h=4.8)
@@ -125,7 +128,8 @@ arrow(s, 10.2, 3.35, 6.7, 2.5, dashed=True, color=TEAL)
 bullets(s, [
     ("Decision loop:  AgentDecision (why) > AgentAction (what) > validator > tool > ToolObservation > state update > decide again", 0, {"size": 13, "space": 4}),
     ("Guardrail = pure function (action, state) > (allowed, reason).  The agent cannot bypass or argue with it.", 0, {"size": 13, "space": 4}),
-    ("Two memory kinds: mission memory (this flight) drives decisions; RAG knowledge (static docs) is advisory and never executes anything.", 0, {"size": 13}),
+    ("Two memory kinds: mission memory (this flight) drives decisions; RAG knowledge (static docs) is advisory and never executes anything.", 0, {"size": 13, "space": 4}),
+    ("Every tool call runs under a watchdog (10s): a hung tool becomes a normal failure observation — guardrails still apply.", 0, {"size": 13}),
 ], y=5.75, h=1.6)
 
 # ---------------------------------------------- slide 3: decision workflow ---
@@ -190,15 +194,48 @@ bullets(s, [
     ("Requirements met:  >=3 tool calls OK   decision from a tool result OK   visible state change OK   failure + fallback OK   clear end condition OK", 0, {"bold": True, "color": NAVY, "size": 15}),
 ], y=6.5, h=0.6)
 
-# --------------------------------------------- slide 5: failure and safety ---
+# ------------------------------------------- slide 5: mock-LLM seams ---
+s = slide("Where AI Lives — 1 real ML component, 3 mock-LLM seams",
+          "AI is allowed to read, interpret, and advise — deterministic code decides and acts")
+seams = [
+    ("RAG Semantic Retriever — REAL ML", TEAL,
+     "sentence-transformers all-MiniLM-L6-v2 · cosine similarity over 3 knowledge docs",
+     "Triggered only when confidence < 0.70. Purely advisory: it backs the re-plan decision, it never makes it."),
+    ("NLPMissionParser — mock LLM (seam 1)", ORANGE,
+     "Extracts target, capabilities, constraints from free text",
+     "Same contract an LLM call would fill. Proposes only — capabilities can be added, never removed; pre-flight still gates them."),
+    ("FailureAdvisor — mock LLM (seam 2)", ORANGE,
+     "Classifies tool failures: transient vs permanent",
+     "Only selects between pre-approved policies (retry vs abort). The retry budget (3) is still guardrail-enforced."),
+    ("Report narrative writer — mock LLM (seam 3)", ORANGE,
+     "Turns structured mission facts into prose",
+     "Can reword, never change: finding, confidence history, and outcome come from mission memory, not the writer."),
+]
+y = 1.35
+for title, c, what, boundary in seams:
+    box(s, 0.5, y, 3.4, 1.15, title, c, WHITE, 12)
+    tb = s.shapes.add_textbox(Inches(4.15), y + 0.02, Inches(8.6), Inches(1.15))
+    tf = tb.text_frame; tf.word_wrap = True
+    p1 = tf.paragraphs[0]; r1 = p1.add_run(); r1.text = what
+    r1.font.size = Pt(13); r1.font.bold = True; r1.font.name = MONO; r1.font.color.rgb = NAVY
+    p2 = tf.add_paragraph(); r2 = p2.add_run(); r2.text = boundary
+    r2.font.size = Pt(12); r2.font.color.rgb = GRAY
+    y += 1.28
+box(s, 0.5, 6.6, 12.3, 0.65,
+    "A real model drops into any seam tomorrow — the guardrails never trust it either way.",
+    NAVY, WHITE, 14)
+
+# ---------------------------------------- slide 6: failure and safety ---
 s = slide("Failure Handling & Safety", "Detect > interpret > fallback > update state > continue or stop safely")
 bullets(s, [
     ("Two planted failures, two different fallbacks", 0, {"bold": True, "color": NAVY, "size": 18}),
-    ("Camera timeout > recoverable > bounded retry (3).   Weak confidence > not a failure > more evidence (re-inspect).", 0, {"size": 15}),
+    ("Camera timeout > advisor says transient > bounded retry (3).   Weak confidence > not a failure > more evidence (re-inspect).", 0, {"size": 15}),
     ("Where I deliberately do NOT trust the agent", 0, {"bold": True, "color": NAVY, "size": 18}),
     ("Pre-flight gate: 5 critical checks must pass before any movement (low-battery scenario > abort with zero movement commands)", 0, {"size": 15}),
-    ("Battery floor 30% for movement · capture retry cap · no capture at base · no detection without evidence · 30-step budget", 0, {"size": 15}),
+    ("Battery floor 30% (or a parsed free-text floor) for movement · capture retry cap · no capture at base · no detection without evidence · 30-step budget", 0, {"size": 15}),
     ("Defense in depth: even past the guardrail, MockDrone itself refuses moves <= 20% battery — like a real flight controller.", 0, {"size": 15}),
+    ("Every tool call is watchdogged", 0, {"bold": True, "color": NAVY, "size": 18}),
+    ("A hang > 10s becomes a failure ToolObservation and flows through the normal failure pipeline — guardrails still run. (Honest limit: the stuck thread keeps running; v2 adds process isolation.)", 0, {"size": 15}),
     ("End conditions are always defined", 0, {"bold": True, "color": NAVY, "size": 18}),
     ("COMPLETE with report · ABORTED with printed reason + failure report · step budget exhausted > abort. No infinite loops.", 0, {"size": 15}),
 ], y=1.3, h=4.3)
@@ -206,7 +243,7 @@ box(s, 0.6, 5.85, 12.1, 1.0,
     "Governing principle:  the agent proposes what to do —  deterministic software decides whether it is allowed.",
     NAVY, WHITE, 17)
 
-# ------------------------------------------------------ slide 6: ownership ---
+# ------------------------------------------------------ slide 7: ownership ---
 s = slide("My Ownership: the Decision Core",
           "AgentController._decide() + MissionState — small enough to defend line by line")
 bullets(s, [
