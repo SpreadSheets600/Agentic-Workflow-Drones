@@ -85,7 +85,7 @@ def arrow(s, x1, y1, x2, y2, color=NAVY, width=2.5, dashed=False):
 
 # ------------------------------------------------ slide 1: problem/mission ---
 s = slide("Solar Panel Inspection with an Agentic Drone",
-          "WeevilDrone Technology — Agentic AI Workflow Challenge")
+          "WeevilDrone Technology Agentic AI Workflow Challenge")
 box(s, 0.6, 1.3, 12.1, 0.95,
     'MISSION:  "Inspect Area A, identify a possible anomaly,\ncollect evidence, and generate a short inspection report."',
     NAVY, WHITE, 16)
@@ -98,13 +98,13 @@ bullets(s, [
     ("6 tools · decisions driven by tool results · visible state changes · bounded retry · safe abort", 0),
     ("Two mission intake paths", 0, {"bold": True, "color": NAVY, "size": 19, "space": 4}),
     ("Structured (--scenario) or free text (--mission \"Inspect the north solar field; return when battery hits 45%\")", 0),
-    ("The mock-NLP parser proposes target/capabilities/constraints — pre-flight still gates every one of them", 0),
+    ("The mock-NLP parser proposes target/capabilities/constraints pre-flight still gates every one of them", 0),
     ("Engineering constraints I set", 0, {"bold": True, "color": NAVY, "size": 19, "space": 4}),
     ("Mocked drone + vision (same contracts a real stack would expose) · plain Python · every decision explainable to a line of code", 0),
 ], y=2.45, h=4.8)
 
 # ------------------------------------------------- slide 2: architecture ---
-s = slide("Architecture", "Agent decides WHAT it wants — deterministic guardrails decide what it MAY")
+s = slide("Architecture", "Agent decides WHAT it wants deterministic guardrails decide what it MAY")
 box(s, 0.4, 2.6, 1.6, 0.9, "MISSION\nINPUT", GRAY, WHITE, 12)
 box(s, 2.4, 1.35, 4.6, 3.9, "", NAVY)
 tb = s.shapes.add_textbox(Inches(2.5), Inches(1.42), Inches(4.4), Inches(0.4))
@@ -129,11 +129,11 @@ bullets(s, [
     ("Decision loop:  AgentDecision (why) > AgentAction (what) > validator > tool > ToolObservation > state update > decide again", 0, {"size": 13, "space": 4}),
     ("Guardrail = pure function (action, state) > (allowed, reason).  The agent cannot bypass or argue with it.", 0, {"size": 13, "space": 4}),
     ("Two memory kinds: mission memory (this flight) drives decisions; RAG knowledge (static docs) is advisory and never executes anything.", 0, {"size": 13, "space": 4}),
-    ("Every tool call runs under a watchdog (10s): a hung tool becomes a normal failure observation — guardrails still apply.", 0, {"size": 13}),
+    ("Every tool call runs under a watchdog (10s): a hung tool becomes a normal failure observation guardrails still apply.", 0, {"size": 13}),
 ], y=5.75, h=1.6)
 
 # ---------------------------------------------- slide 3: decision workflow ---
-s = slide("Decision Workflow — state drives actions, not a plan index")
+s = slide("Decision Workflow state drives actions, not a plan index")
 steps = ["MISSION", "PLAN", "OBSERVE", "DECIDE", "ACT", "VERIFY", "RE-PLAN", "COMPLETE"]
 x = 0.45
 for i, st in enumerate(steps):
@@ -143,11 +143,11 @@ for i, st in enumerate(steps):
         arrow(s, x + 1.62, 1.7, x + 1.72, 1.7, width=2)
     x += 1.63
 bullets(s, [
-    ("Key invariant: _decide() never reads the plan list — it reads current state. That is what makes it agentic, not scripted.", 0, {"bold": True, "color": NAVY}),
+    ("Key invariant: _decide() never reads the plan list it reads current state. That is what makes it agentic, not scripted.", 0, {"bold": True, "color": NAVY}),
 ], y=2.3, h=0.5, size=16)
 box(s, 0.6, 2.95, 5.9, 2.7, "", LIGHT)
 tb = s.shapes.add_textbox(Inches(0.8), Inches(3.05), Inches(5.5), Inches(0.5))
-r = tb.text_frame.paragraphs[0].add_run(); r.text = "Decision point 1 — tool failure"
+r = tb.text_frame.paragraphs[0].add_run(); r.text = "Decision point 1 tool failure"
 r.font.bold = True; r.font.size = Pt(16); r.font.color.rgb = RED
 bullets(s, [
     ("Observation: capture_image > success=false 'Camera Timeout'", 0, {"mono": True, "size": 12}),
@@ -157,7 +157,7 @@ bullets(s, [
 ], x=0.85, y=3.55, w=5.4, h=2.0, size=14)
 box(s, 6.9, 2.95, 5.9, 2.7, "", LIGHT)
 tb = s.shapes.add_textbox(Inches(7.1), Inches(3.05), Inches(5.5), Inches(0.5))
-r = tb.text_frame.paragraphs[0].add_run(); r.text = "Decision point 2 — weak evidence"
+r = tb.text_frame.paragraphs[0].add_run(); r.text = "Decision point 2 weak evidence"
 r.font.bold = True; r.font.size = Pt(16); r.font.color.rgb = RED
 bullets(s, [
     ("Observation: detect_anomaly > confidence=0.46 (< 0.70)", 0, {"mono": True, "size": 12}),
@@ -166,11 +166,11 @@ bullets(s, [
     ("Second detection: 0.93 >= 0.70 > verify > return > report", 0, {"size": 14}),
 ], x=7.15, y=3.55, w=5.4, h=2.0, size=14)
 bullets(s, [
-    ("Same observation, different decisions — chosen by state, budget, and policy. The report prints Initial Plan vs Actual Decision Path as proof of re-planning.", 0, {"bold": True, "color": NAVY, "size": 14}),
+    ("Same observation, different decisions chosen by state, budget, and policy. The report prints Initial Plan vs Actual Decision Path as proof of re-planning.", 0, {"bold": True, "color": NAVY, "size": 14}),
 ], y=5.85, h=0.9, size=14)
 
 # ---------------------------------------------------- slide 4: demo trace ---
-s = slide("Demo Trace — one mission, end to end",
+s = slide("Demo Trace one mission, end to end",
           "python -m app.main --scenario mission   (all mocked, runs on a laptop)")
 trace = [
     ("PRE_FLIGHT", "5/5 capability checks PASS > mission ready", NAVY),
@@ -181,7 +181,7 @@ trace = [
     ("detect_anomaly", "confidence=0.46 < 0.70 > consult RAG > RE-PLAN + RE-INSPECT", ORANGE),
     ("detect_anomaly", "confidence=0.93 >= 0.70 > VERIFY FINDING", NAVY),
     ("return_to_base", "location BASE, battery=80", NAVY),
-    ("generate_report", "COMPLETE — report generated from mission memory", TEAL),
+    ("generate_report", "COMPLETE report generated from mission memory", TEAL),
 ]
 y = 1.3
 for tool, result, c in trace:
@@ -195,19 +195,19 @@ bullets(s, [
 ], y=6.5, h=0.6)
 
 # ------------------------------------------- slide 5: mock-LLM seams ---
-s = slide("Where AI Lives — 1 real ML component, 3 mock-LLM seams",
-          "AI is allowed to read, interpret, and advise — deterministic code decides and acts")
+s = slide("Where AI Lives 1 real ML component, 3 mock-LLM seams",
+          "AI is allowed to read, interpret, and advise deterministic code decides and acts")
 seams = [
-    ("RAG Semantic Retriever — REAL ML", TEAL,
+    ("RAG Semantic Retriever REAL ML", TEAL,
      "sentence-transformers all-MiniLM-L6-v2 · cosine similarity over 3 knowledge docs",
      "Triggered only when confidence < 0.70. Purely advisory: it backs the re-plan decision, it never makes it."),
-    ("NLPMissionParser — mock LLM (seam 1)", ORANGE,
+    ("NLPMissionParser mock LLM (seam 1)", ORANGE,
      "Extracts target, capabilities, constraints from free text",
-     "Same contract an LLM call would fill. Proposes only — capabilities can be added, never removed; pre-flight still gates them."),
-    ("FailureAdvisor — mock LLM (seam 2)", ORANGE,
+     "Same contract an LLM call would fill. Proposes only capabilities can be added, never removed; pre-flight still gates them."),
+    ("FailureAdvisor mock LLM (seam 2)", ORANGE,
      "Classifies tool failures: transient vs permanent",
      "Only selects between pre-approved policies (retry vs abort). The retry budget (3) is still guardrail-enforced."),
-    ("Report narrative writer — mock LLM (seam 3)", ORANGE,
+    ("Report narrative writer mock LLM (seam 3)", ORANGE,
      "Turns structured mission facts into prose",
      "Can reword, never change: finding, confidence history, and outcome come from mission memory, not the writer."),
 ]
@@ -222,7 +222,7 @@ for title, c, what, boundary in seams:
     r2.font.size = Pt(12); r2.font.color.rgb = GRAY
     y += 1.28
 box(s, 0.5, 6.6, 12.3, 0.65,
-    "A real model drops into any seam tomorrow — the guardrails never trust it either way.",
+    "A real model drops into any seam tomorrow the guardrails never trust it either way.",
     NAVY, WHITE, 14)
 
 # ---------------------------------------- slide 6: failure and safety ---
@@ -233,29 +233,29 @@ bullets(s, [
     ("Where I deliberately do NOT trust the agent", 0, {"bold": True, "color": NAVY, "size": 18}),
     ("Pre-flight gate: 5 critical checks must pass before any movement (low-battery scenario > abort with zero movement commands)", 0, {"size": 15}),
     ("Battery floor 30% (or a parsed free-text floor) for movement · capture retry cap · no capture at base · no detection without evidence · 30-step budget", 0, {"size": 15}),
-    ("Defense in depth: even past the guardrail, MockDrone itself refuses moves <= 20% battery — like a real flight controller.", 0, {"size": 15}),
+    ("Defense in depth: even past the guardrail, MockDrone itself refuses moves <= 20% battery like a real flight controller.", 0, {"size": 15}),
     ("Every tool call is watchdogged", 0, {"bold": True, "color": NAVY, "size": 18}),
-    ("A hang > 10s becomes a failure ToolObservation and flows through the normal failure pipeline — guardrails still run. (Honest limit: the stuck thread keeps running; v2 adds process isolation.)", 0, {"size": 15}),
+    ("A hang > 10s becomes a failure ToolObservation and flows through the normal failure pipeline guardrails still run. (Honest limit: the stuck thread keeps running; v2 adds process isolation.)", 0, {"size": 15}),
     ("End conditions are always defined", 0, {"bold": True, "color": NAVY, "size": 18}),
     ("COMPLETE with report · ABORTED with printed reason + failure report · step budget exhausted > abort. No infinite loops.", 0, {"size": 15}),
 ], y=1.3, h=4.3)
 box(s, 0.6, 5.85, 12.1, 1.0,
-    "Governing principle:  the agent proposes what to do —  deterministic software decides whether it is allowed.",
+    "Governing principle:  the agent proposes what to do  deterministic software decides whether it is allowed.",
     NAVY, WHITE, 17)
 
 # ------------------------------------------------------ slide 7: ownership ---
 s = slide("My Ownership: the Decision Core",
-          "AgentController._decide() + MissionState — small enough to defend line by line")
+          "AgentController._decide() + MissionState small enough to defend line by line")
 bullets(s, [
     ("Internals", 0, {"bold": True, "color": NAVY, "size": 18}),
     ("_decide() = pure function of MissionState > AgentDecision (a WHY), which expands into validated AgentActions (a WHAT).", 0, {"size": 15}),
-    ("Decisions and actions are different types: the validator refuses anything that is not an executable action — no path from 're-inspect' to the drone without becoming a checked command.", 0, {"size": 15}),
+    ("Decisions and actions are different types: the validator refuses anything that is not an executable action no path from 're-inspect' to the drone without becoming a checked command.", 0, {"size": 15}),
     ("What can fail and how it is handled", 0, {"bold": True, "color": NAVY, "size": 18}),
     ("Tool failure > observation, not exception. Guardrail rejection > recorded SAFETY_REJECTION + abort. Retrieval down > caught, mission continues. No convergence > step budget abort.", 0, {"size": 15}),
     ("How I debug it", 0, {"bold": True, "color": NAVY, "size": 18}),
-    ("Deterministic scenarios (same input = same trace) · full event history in MissionState · state-in/decision-out makes _decide() hand-testable — the unit tests do exactly that.", 0, {"size": 15}),
+    ("Deterministic scenarios (same input = same trace) · full event history in MissionState · state-in/decision-out makes _decide() hand-testable the unit tests do exactly that.", 0, {"size": 15}),
     ("Alternatives I considered", 0, {"bold": True, "color": NAVY, "size": 18}),
-    ("LLM in the loop (cannot defend each decision) · agent framework (hides the state machine I must own) · plan-index script (cannot respond to change). Honest limits: one mission type, one-if failure classifier, tool timeout lacks process isolation — v2 roadmap has the fixes.", 0, {"size": 15}),
+    ("LLM in the loop (cannot defend each decision) · agent framework (hides the state machine I must own) · plan-index script (cannot respond to change). Honest limits: one mission type, one-if failure classifier, tool timeout lacks process isolation v2 roadmap has the fixes.", 0, {"size": 15}),
 ], y=1.3, h=5.9, size=15)
 
 prs.save("WeevilDrone_Agentic_Demo.pptx")

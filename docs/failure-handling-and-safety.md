@@ -13,7 +13,7 @@ For every failure the system follows: **detect → interpret → choose fallback
 - **Bound:** at 3 retries the guardrail rejects `CAPTURE_IMAGE` outright and the mission aborts with "Camera retry limit reached." Retry is a *budget*, not a hope.
 - **Second attempt succeeds** → evidence `IMG-002` recorded, mission continues.
 
-### 2. Low detection confidence (0.46 < 0.70) — the "unexpected result"
+### 2. Low detection confidence (0.46 < 0.70) the "unexpected result"
 - **Detect:** `detect_anomaly` data shows `confidence: 0.46`.
 - **Interpret:** evidence insufficient to confirm; aborting would throw away a plausible finding.
 - **Fallback:** consult knowledge base (retrieval says: "if anomaly confidence is below 0.70, collect additional evidence"), rewrite plan, `RE_INSPECT`. Second detection: 0.93 → verified.
@@ -48,20 +48,20 @@ The challenge asks for at least one such place; here are all of them, in the ord
 | Evidence precondition | No detection without evidence; no report without evidence (unless aborted) | Prevents fabricated findings. |
 | Step budget | 30 steps → abort | The global loop-termination guarantee. |
 
-Additionally `MockDrone` itself refuses moves ≤ 20% battery — tool-side validation as a last line of defense, mirroring how a real flight controller enforces limits regardless of what the autonomy stack sends.
+Additionally `MockDrone` itself refuses moves ≤ 20% battery tool-side validation as a last line of defense, mirroring how a real flight controller enforces limits regardless of what the autonomy stack sends.
 
-**Design principle:** the agent decides *what it wants*; the validator decides *what it may*. The validator is a pure function — `(action, state) → (allowed, reason)` — with no access to tools, no state of its own, and unit tests covering each rule (`app/tests/test_safety.py`). Rejections are recorded as `SAFETY_REJECTION` events and appear in the report's Safety Decisions section.
+**Design principle:** the agent decides *what it wants*; the validator decides *what it may*. The validator is a pure function `(action, state) → (allowed, reason)` with no access to tools, no state of its own, and unit tests covering each rule (`app/tests/test_safety.py`). Rejections are recorded as `SAFETY_REJECTION` events and appear in the report's Safety Decisions section.
 
 ## Clear end conditions (all demonstrated)
 
 - **Complete:** report generated from mission memory, status `COMPLETE`, drone at `BASE`.
 - **Safe abort:** reason printed + failure report generated, status `ABORTED`, no partial-finding ambiguity (report marks the mission "stopped safely before completion").
-- **Handover:** the generated report itself is the handover artifact — it contains the event narrative, confidence history, failure counts, and knowledge sources used, enough for a human operator to decide next steps.
+- **Handover:** the generated report itself is the handover artifact it contains the event narrative, confidence history, failure counts, and knowledge sources used, enough for a human operator to decide next steps.
 
 ## What I'd improve for real hardware
 
 - Battery model with consumption per distance rather than flat −10% per move.
-- ~~Watchdog/heartbeat around `call_tool`~~ **done** — a hung tool now becomes a failure `ToolObservation` (see failure #6 above); a real deployment would additionally use process-level isolation so the timed-out worker can actually be killed.
+- ~~Watchdog/heartbeat around `call_tool`~~ **done** a hung tool now becomes a failure `ToolObservation` (see failure #6 above); a real deployment would additionally use process-level isolation so the timed-out worker can actually be killed.
 - Return-to-home reserved-power check before departure (compute "can I still get home?" rather than a flat floor).
 
 ## Where AI would (and would not) go

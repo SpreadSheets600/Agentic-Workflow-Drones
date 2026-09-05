@@ -11,13 +11,13 @@ The component I fully own and can defend line by line is **the agent decision lo
 - `INSPECTING / RE_INSPECTING` → the richest branch, four ordered checks:
   1. New un-analyzed evidence? → `DETECT_ANOMALY`.
   2. No evidence at all? → `CAPTURE_IMAGE`.
-  3. Confidence ≥ 0.70? → `VERIFY_FINDING` (no tool — a memory operation).
+  3. Confidence ≥ 0.70? → `VERIFY_FINDING` (no tool a memory operation).
   4. Otherwise → consult knowledge, rewrite plan, `RE_INSPECT`.
 - `VERIFYING` → `RETURN_TO_BASE`; `RETURNING` → `GENERATE_REPORT`.
 
-The key invariant: **the plan list is never consulted to choose the next action.** The plan exists for the human (it is printed and diffed on re-plan); the state is what actually drives behavior. That is what separates this from a script — a script follows an index into a list, which is exactly how the camera failure would have derailed it.
+The key invariant: **the plan list is never consulted to choose the next action.** The plan exists for the human (it is printed and diffed on re-plan); the state is what actually drives behavior. That is what separates this from a script a script follows an index into a list, which is exactly how the camera failure would have derailed it.
 
-Decisions and actions are deliberately different types (`DecisionType` vs `ActionType`). A *decision* is a why (`RE_INSPECT`); it expands into zero or more executable *actions* (`CAPTURE_IMAGE` → `DETECT_ANOMALY`). This keeps agent-level intent out of the guardrails — the validator refuses anything that isn't a concrete executable `ActionType` (it raises `TypeError` on a decision), so there is no path from "I should re-inspect" to the drone without first becoming a validated, physical command.
+Decisions and actions are deliberately different types (`DecisionType` vs `ActionType`). A *decision* is a why (`RE_INSPECT`); it expands into zero or more executable *actions* (`CAPTURE_IMAGE` → `DETECT_ANOMALY`). This keeps agent-level intent out of the guardrails the validator refuses anything that isn't a concrete executable `ActionType` (it raises `TypeError` on a decision), so there is no path from "I should re-inspect" to the drone without first becoming a validated, physical command.
 
 ## Inputs and outputs
 
@@ -36,21 +36,21 @@ Decisions and actions are deliberately different types (`DecisionType` vs `Actio
 | Tool returns malformed data | `update_state()` uses `.get()` with fallbacks for legacy/new keys | Missing fields are simply not recorded; no crash |
 | Invalid decision reaching the validator | `TypeError` in `SafetyValidator` | Programming bug, fails fast by design |
 
-## Why designed this way — the two-line version
+## Why designed this way the two-line version
 
-Because in a real drone system the two things that must never be uncertain are **why** the agent did something (auditability) and **whether** it was allowed to (safety). Everything else — mocked tools, console output, simple thresholds — is in service of making those two things visible.
+Because in a real drone system the two things that must never be uncertain are **why** the agent did something (auditability) and **whether** it was allowed to (safety). Everything else mocked tools, console output, simple thresholds is in service of making those two things visible.
 
 ## Alternatives considered
 
 - **Switch dispatch table** (`status → handler function`): cleaner for 10+ states; overkill for 8 where the branches share state reads. The if/elif is ~60 readable lines.
-- **Plan-index-driven execution** (`plan[i]` with pointers): simpler code, but it's a script — it cannot express "the situation changed" without hacky index rewinding, which is precisely the agentic behavior being demonstrated.
+- **Plan-index-driven execution** (`plan[i]` with pointers): simpler code, but it's a script it cannot express "the situation changed" without hacky index rewinding, which is precisely the agentic behavior being demonstrated.
 - **Event-driven / behavior-tree design**: better composability for many behaviors; more indirection than one mission needs.
 
 ## How I debug it
 
 1. **Reproduce deterministically:** every scenario is a CLI flag (`--scenario mission|low-battery|preflight_failure`); the same input produces the same trace, so a failure is always replayable.
-2. **Read the audit trail:** `MissionState.history` records every status change, event, failure, and decision with reasons. The final report prints this narrative — often the bug is visible in the printed trace without a debugger.
-3. **Isolate:** `MissionState` is a plain dataclass, and `_decide()` is state-in/decision-out — I can construct a suspicious state by hand in a REPL or test and inspect the decision it produces. The unit tests (`app/tests/`) do exactly this.
+2. **Read the audit trail:** `MissionState.history` records every status change, event, failure, and decision with reasons. The final report prints this narrative often the bug is visible in the printed trace without a debugger.
+3. **Isolate:** `MissionState` is a plain dataclass, and `_decide()` is state-in/decision-out I can construct a suspicious state by hand in a REPL or test and inspect the decision it produces. The unit tests (`app/tests/`) do exactly this.
 4. **Shrink the loop:** `max_steps` is injectable; setting it to 1 shows exactly one iteration's decision path.
 
 ## How I would improve / scale it

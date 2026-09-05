@@ -1,6 +1,6 @@
 # Agentic Workflow
 
-The challenge's canonical cycle is **Mission → Plan → Observe → Decide → Act → Verify → Re-plan → Complete**. Here is exactly where each happens in this codebase — and, more importantly, where the loop *branches*.
+The challenge's canonical cycle is **Mission → Plan → Observe → Decide → Act → Verify → Re-plan → Complete**. Here is exactly where each happens in this codebase and, more importantly, where the loop *branches*.
 
 ## The mapping
 
@@ -18,18 +18,18 @@ The challenge's canonical cycle is **Mission → Plan → Observe → Decide →
 ## The three decision points that make it agentic
 
 ### 1. Tool failure → retry (bounded)
-First `capture_image` fails with "Camera Timeout". The controller does **not** rerun the script — it interprets the failure as *recoverable* (transient camera fault), increments `camera_retries`, and re-enters the loop for the same step. If the retry budget (3) were exhausted, the same branch would abort instead. Same observation, two different decisions, chosen by state.
+First `capture_image` fails with "Camera Timeout". The controller does **not** rerun the script it interprets the failure as *recoverable* (transient camera fault), increments `camera_retries`, and re-enters the loop for the same step. If the retry budget (3) were exhausted, the same branch would abort instead. Same observation, two different decisions, chosen by state.
 
 ### 2. Weak evidence → consult knowledge → re-plan
 `detect_anomaly` returns confidence **0.46 < 0.70**. The controller:
-1. Queries the RAG knowledge base ("what confidence is required?", "has this area had anomalies before?") — retrieval results are printed and credited in the report.
+1. Queries the RAG knowledge base ("what confidence is required?", "has this area had anomalies before?") retrieval results are printed and credited in the report.
 2. Rewrites the plan to `capture_image → detect_anomaly → verify_finding → return_to_base → generate_report`.
 3. Returns `RE_INSPECT` with a `plan_update` diff, which is printed and recorded.
 
 Next loop iteration executes the *new* plan: a second capture and detection return 0.93 ≥ 0.70 → `VERIFY_FINDING` → the original path resumes. Note the guardrail backstop: `CAPTURE_IMAGE` is rejected once the retry budget is gone, so even a buggy decision layer cannot loop forever.
 
 ### 3. Pre-flight failure → safe abort before movement
-In `--scenario low-battery`, the battery check (15%) fails pre-flight. `mission_ready = False`, the agent aborts with the reason, and a failure report is still generated — **no movement command is ever issued**. The mission ends in a defined terminal state, not an exception.
+In `--scenario low-battery`, the battery check (15%) fails pre-flight. `mission_ready = False`, the agent aborts with the reason, and a failure report is still generated **no movement command is ever issued**. The mission ends in a defined terminal state, not an exception.
 
 ## State machine
 
@@ -53,7 +53,7 @@ stateDiagram-v2
     note right of INSPECTING
         Every transition goes through
         MissionState.transition() and is
-        appended to history — the state
+        appended to history the state
         machine and its audit log are
         the same object.
     end note
@@ -70,4 +70,4 @@ The loop cannot run forever:
 
 ## What makes this *not* a fixed script
 
-The initial plan and the executed decision path diverge. The report prints both — "Initial Plan" and "Actual Decision Path" — side by side as evidence of re-planning. In the demo run, the executed path includes a retry and a re-inspection that exist nowhere in the original plan.
+The initial plan and the executed decision path diverge. The report prints both "Initial Plan" and "Actual Decision Path" side by side as evidence of re-planning. In the demo run, the executed path includes a retry and a re-inspection that exist nowhere in the original plan.

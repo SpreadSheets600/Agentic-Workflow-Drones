@@ -1,4 +1,4 @@
-# WeevilDrone Agentic Inspection Agent — Documentation
+# WeevilDrone Agentic Inspection Agent Documentation
 
 <p align="center">
   <img src="architecture.png" alt="Full system architecture diagram" width="90%">
@@ -8,7 +8,7 @@ A small, deliberately simple agentic system for an autonomous drone inspection m
 
 > *"Inspect Area A, identify a possible anomaly, collect evidence, and generate a short inspection report."*
 
-The system receives a mission, proposes a plan, calls tools, **observes the results**, updates its state, and **changes its plan when the situation changes** — including retrying a failed camera capture and re-inspecting when detection confidence is too low. Every action passes through a deterministic safety validator before it can reach the (mocked) drone.
+The system receives a mission, proposes a plan, calls tools, **observes the results**, updates its state, and **changes its plan when the situation changes** including retrying a failed camera capture and re-inspecting when detection confidence is too low. Every action passes through a deterministic safety validator before it can reach the (mocked) drone.
 
 ## Documentation Map
 
@@ -37,9 +37,9 @@ python -m pytest app/tests -q                # unit tests
 
 ## The 60-Second Version
 
-- **Agent core** (`app/agent/controller.py`) — a `while` loop that decides the next action from *current state*, never from a fixed script.
-- **Tools** (`app/tools/`) — mocked drone, camera/vision, and report writer. Each tool returns a structured `ToolObservation` (success, message, data), not a raw value; every call runs under a watchdog so a hang becomes a normal failure.
-- **State/Memory** (`app/models/state.py`) — one `MissionState` dataclass: battery, location, evidence, confidence, failures, decisions, full event history.
-- **Safety** (`app/safety/guardrails.py`) — deterministic checks (battery thresholds, retry limits, location rules) applied *before* any tool runs. The agent cannot bypass them.
-- **Knowledge (bonus)** (`app/knowledge/`) — a small semantic (RAG) retriever that the agent consults when evidence confidence is low; it informs the re-inspection decision rather than making it.
-- **Mock-AI seams** (`app/mission.py`, `app/agent/advisor.py`, reporting narrative) — where a real LLM would slot in (mission understanding, failure triage, report prose), simulated with deterministic rules so the demo stays reproducible. Their output is always a proposal the guardrails still validate.
+- **Agent core** (`app/agent/controller.py`) a `while` loop that decides the next action from *current state*, never from a fixed script.
+- **Tools** (`app/tools/`) mocked drone, camera/vision, and report writer. Each tool returns a structured `ToolObservation` (success, message, data), not a raw value; every call runs under a watchdog so a hang becomes a normal failure.
+- **State/Memory** (`app/models/state.py`) one `MissionState` dataclass: battery, location, evidence, confidence, failures, decisions, full event history.
+- **Safety** (`app/safety/guardrails.py`) deterministic checks (battery thresholds, retry limits, location rules) applied *before* any tool runs. The agent cannot bypass them.
+- **Knowledge (bonus)** (`app/knowledge/`) a small semantic (RAG) retriever that the agent consults when evidence confidence is low; it informs the re-inspection decision rather than making it.
+- **Mock-AI seams** (`app/mission.py`, `app/agent/advisor.py`, reporting narrative) where a real LLM would slot in (mission understanding, failure triage, report prose), simulated with deterministic rules so the demo stays reproducible. Their output is always a proposal the guardrails still validate.

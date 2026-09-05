@@ -50,7 +50,7 @@ class AgentController:
         self._print_header()
         # Free-Text Missions Go Through The Mock NLP Parser; Structured
         # Missions Use The Static Parser. Either Way The Result Is A
-        # Proposal — The Guardrails Still Enforce It.
+        # Proposal The Guardrails Still Enforce It.
         if self.state.missionText:
             context = NLPMissionParser().parse(self.state.missionText)
             self.state.missionID = context.mission_id

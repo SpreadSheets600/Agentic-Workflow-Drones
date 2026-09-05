@@ -6,17 +6,17 @@
 python -m pytest app/tests -q    # unit tests (state transitions, guardrails, reporting, retrieval)
 ```
 
-All scenarios run on a laptop; the drone, camera, and detector are mocked. The first `mission` run downloads a small embedding model (~90 MB) for the optional RAG layer; if it is unavailable, the mission still completes — retrieval failures are caught and printed.
+All scenarios run on a laptop; the drone, camera, and detector are mocked. The first `mission` run downloads a small embedding model (~90 MB) for the optional RAG layer; if it is unavailable, the mission still completes retrieval failures are caught and printed.
 
-## Scenario 0 — Free-text mission (mock NLP parser)
+## Scenario 0 Free-text mission (mock NLP parser)
 
 ```bash
 python -m app.main --mission "Inspect the north solar field and take photos; return when battery hits 45%"
 ```
 
-Demonstrates the mock-LLM mission-parsing seam: the header prints `Mission Source: Free text (mock NLP parser)`, then the parsed target (`The North Solar Field`) and the parsed battery constraint (`return when battery hits 45%`). The rest of the mission runs exactly like Scenario 1 — the parser only *proposes* the target and constraint; the guardrails enforce them. Run without `--mission` and you get the structured mission (`Mission Source: Structured (static parser)`), which is a nice live contrast to show the seam works both ways.
+Demonstrates the mock-LLM mission-parsing seam: the header prints `Mission Source: Free text (mock NLP parser)`, then the parsed target (`The North Solar Field`) and the parsed battery constraint (`return when battery hits 45%`). The rest of the mission runs exactly like Scenario 1 the parser only *proposes* the target and constraint; the guardrails enforce them. Run without `--mission` and you get the structured mission (`Mission Source: Structured (static parser)`), which is a nice live contrast to show the seam works both ways.
 
-## Scenario 1 — Full mission (the one to present)
+## Scenario 1 Full mission (the one to present)
 
 ```bash
 python -m app.main --scenario mission
@@ -24,9 +24,9 @@ python -m app.main --scenario mission
 
 What the audience sees, in order:
 
-1. **Mission received** — MISSION-001, target "Solar Panel Area A", requirements listed.
-2. **Initial plan printed** — check_battery → move_to_target → capture_image → detect_anomaly → verify_finding → return_to_base → generate_report.
-3. **Pre-flight** — five PASS lines; "Mission Readiness: Ready".
+1. **Mission received** MISSION-001, target "Solar Panel Area A", requirements listed.
+2. **Initial plan printed** check_battery → move_to_target → capture_image → detect_anomaly → verify_finding → return_to_base → generate_report.
+3. **Pre-flight** five PASS lines; "Mission Readiness: Ready".
 4. **Tool calls with the fixed trace vocabulary**, e.g.:
    ```
    Decision: Proceed
@@ -47,11 +47,11 @@ What the audience sees, in order:
    Updated:  capture_image -> detect_anomaly -> verify_finding -> ...
    ```
 9. **Re-inspection succeeds:** confidence 0.93 → `Decision: Verify Finding` → return to base → report generated.
-10. **Final report** — includes Initial Plan vs Actual Decision Path, finding, confidence history, failure counts, knowledge used, safety decisions, final battery/location, and an inspection summary. `Final Outcome: Mission Complete`.
+10. **Final report** includes Initial Plan vs Actual Decision Path, finding, confidence history, failure counts, knowledge used, safety decisions, final battery/location, and an inspection summary. `Final Outcome: Mission Complete`.
 
 **Talking points per challenge requirement:** ≥3 tool calls (battery, move, capture, detect, return, report) ✓; decision from a tool result (0.46 < 0.70 → re-inspect) ✓; visible state change (battery 100→80, location BASE→target→BASE, evidence list grows) ✓; failure + fallback (camera timeout retry) ✓; clear end condition (COMPLETE with report) ✓.
 
-## Scenario 2 — Deterministic safety abort
+## Scenario 2 Deterministic safety abort
 
 ```bash
 python -m app.main --scenario low-battery
@@ -59,7 +59,7 @@ python -m app.main --scenario low-battery
 
 Battery starts at 15%. Pre-flight battery check FAILs → "Decision: Abort Mission. Safety: No Movement Command Issued." → failure report still generated → `Final Outcome: Mission Aborted`. This is the slide-5 demo: the guardrail, not the agent, ends the mission, and it happens *before any movement*.
 
-## Scenario 3 — Platform failure
+## Scenario 3 Platform failure
 
 ```bash
 python -m app.main --scenario preflight_failure

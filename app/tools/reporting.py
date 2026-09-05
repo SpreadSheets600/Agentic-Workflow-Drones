@@ -82,7 +82,7 @@ def _narrative(state: MissionState):
     Confidence, Evidence, Failure/Retry History) To An LLM And Ask For A
     Short Human-Readable Narrative. Here The Prose Is Templated From The
     Same Facts So The Demo Stays Deterministic. Boundary (Unchanged):
-    The Narrative Only REWORDS Facts Already In Mission Memory — It Can
+    The Narrative Only REWORDS Facts Already In Mission Memory It Can
     Never Change The Finding, The Confidence, Or The Outcome.
     """
     if state.status.value == "aborted":
