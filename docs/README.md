@@ -1,5 +1,9 @@
 # WeevilDrone Agentic Inspection Agent — Documentation
 
+<p align="center">
+  <img src="architecture.png" alt="Full system architecture diagram" width="90%">
+</p>
+
 A small, deliberately simple agentic system for an autonomous drone inspection mission:
 
 > *"Inspect Area A, identify a possible anomaly, collect evidence, and generate a short inspection report."*

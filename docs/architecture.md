@@ -1,5 +1,7 @@
 # Architecture
 
+![Full system architecture diagram](architecture.png)
+
 ## One clear diagram
 
 ```mermaid
