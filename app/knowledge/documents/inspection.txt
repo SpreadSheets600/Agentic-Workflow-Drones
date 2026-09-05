@@ -1,0 +1,11 @@
+Inspection Procedure
+
+1. Check battery before departure.
+2. Navigate to the assigned inspection area.
+3. Capture an initial image.
+4. Analyze the image for anomalies.
+5. If anomaly confidence is below 0.70,
+   collect additional evidence.
+6. An anomaly should not be confirmed
+   without sufficient visual evidence.
+7. Return to base after completing inspection.

@@ -1,0 +1,11 @@
+Area A Inspection History
+
+Previous inspection:
+Possible surface anomaly detected.
+
+Previous confidence:
+0.61
+
+Recommended action:
+Perform additional visual inspection
+if a similar anomaly is detected.

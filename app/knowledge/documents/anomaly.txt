@@ -1,0 +1,13 @@
+Anomaly Evidence Guidelines
+
+Low confidence:
+0.00 - 0.39
+
+Moderate confidence:
+0.40 - 0.59
+
+High confidence:
+0.70 - 1.00
+
+A finding should only be confirmed
+when confidence is at least 0.70.
